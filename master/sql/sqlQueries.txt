@@ -1,0 +1,69 @@
+1. cd C:\Program Files\MySQL\MySQL Server 8.0\bin
+
+2. mysql -u root -p
+Output:
+[Enter password: *************]
+
+3. create database IPLData;
+
+4. use IPLData
+
+5. create table matches
+(id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+season VARCHAR(4) NOT NULL,
+city VARCHAR(50) NOT NULL,
+date VARCHAR(10) NOT NULL,
+team1 VARCHAR(50) NOT NULL,
+team2 VARCHAR(50) NOT NULL,
+toss_winner VARCHAR(50) NOT NULL,
+toss_decision VARCHAR(5) NOT NULL,
+result VARCHAR(10) NOT NULL,
+dl_applied INT NOT NULL,
+winner VARCHAR(50) NOT NULL,
+win_by_runs INT NOT NULL,
+win_by_wickets INT NOT NULL,
+player_of_match VARCHAR(50) NOT NULL,
+venue VARCHAR(100) NOT NULL,
+umpire1 VARCHAR(50) NOT NULL,
+umpire2 VARCHAR(50) NOT NULL,
+umpire3 VARCHAR(50)
+);
+
+6. select * from matches;
+
+7. Number of matches played per year of all the year in IPL
+SELECT season AS "Year", COUNT(season) AS "Number of Matches"
+FROM matches
+GROUP BY season
+
+8. Number of matches won of all teams over all the years of IPL
+SELECT winner AS "Team Name", count(winner) AS "Number of Wins"
+FROM matches
+WHERE length(winner) > 0
+GROUP BY winner
+
+9. For the year 2016 get the extra runs conceded per team
+SELECT bowling_team AS "Team Name", SUM(extra_runs) AS "Extras"
+FROM deliveries d
+INNER JOIN matches m
+ON d.match_id = m.id
+WHERE season = "2016"
+GROUP BY bowling_team;
+
+10. For the year 2015 get the top economical bowlers.
+SELECT bowler AS "Bowler Name", SUM(total_runs)/(COUNT(total_runs)/6) AS "Economy"
+FROM deliveries d
+INNER JOIN matches m
+ON d.match_id = m.id
+WHERE season = "2015"
+GROUP BY bowler
+ORDER BY Economy;
+
+11. For the year 2017 get top batsman based on strike rate
+SELECT batsman AS "Batsman Name", (SUM(total_runs) * 100)/(COUNT(total_runs)) AS "Strike Rate"
+FROM deliveries d
+INNER JOIN matches m
+ON d.match_id = m.id
+WHERE season = "2017"
+GROUP BY batsman
+ORDER BY "Strike Rate";

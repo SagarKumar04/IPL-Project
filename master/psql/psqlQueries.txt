@@ -1,0 +1,85 @@
+1.
+Creating 'matches' table:
+CREATE TABLE matches
+(id INT,
+season INT,
+city VARCHAR(50),
+date VARCHAR(10),
+team1 VARCHAR(50),
+team2 VARCHAR(50),
+toss_winner VARCHAR(50),
+toss_decision VARCHAR(5),
+result VARCHAR(10),
+dl_applied INT,
+winner VARCHAR(50),
+win_by_runs INT,
+win_by_wickets INT,
+player_of_match VARCHAR(50),
+venue VARCHAR(100),
+umpire1 VARCHAR(50),
+umpire2 VARCHAR(50),
+umpire3 VARCHAR(50)
+);
+
+2.
+Creating 'deliveries' table:
+create table deliveries
+(match_id INT PRIMARY KEY,
+inning INT,
+batting_team VARCHAR(50),
+bowling_team VARCHAR(50),
+over INT,
+ball INT,
+batsman VARCHAR(50),
+non_striker VARCHAR(50),
+bowler VARCHAR(50),
+is_super_over INT,
+wide_runs INT,
+bye_runs INT,
+legbye_runs INT,
+noball_runs INT,
+penalty_runs INT,
+batsman_runs INT,
+extra_runs INT,
+total_runs INT,
+player_dismissed VARCHAR(50),
+dismissal_kind VARCHAR(50),
+fielder VARCHAR(50)
+);
+
+3.Number of matches played per year of all the year in IPL
+SELECT season AS "Year", COUNT(season) AS "Number of Matches"
+FROM matches
+GROUP BY season
+
+4. Number of matches won of all teams over all the years of IPL
+SELECT winner AS "Team Name", count(winner) AS "Number of Wins"
+FROM matches
+WHERE length(winner) > 0
+GROUP BY winner
+
+5. For the year 2016 get the extra runs conceded per team
+SELECT bowling_team AS "Team Name", SUM(extra_runs) AS "Extras"
+FROM deliveries
+LEFT JOIN matches
+ON deliveries.match_id = matches.id
+WHERE matches.season = 2016
+GROUP BY bowling_team;
+
+6. For the year 2015 get the top economical bowlers.
+SELECT bowler AS "Bowler Name", SUM(total_runs)/(COUNT(total_runs)/6) AS "Economy"
+FROM deliveries
+LEFT JOIN matches
+ON deliveries.match_id = matches.id
+WHERE matches.season = 2015
+GROUP BY bowler
+ORDER BY "Economy" ASC;
+
+7. For the year 2017 get top batsman based on strike rate
+SELECT batsman AS "Batsman Name", (SUM(total_runs) * 100)/(COUNT(total_runs)) AS "Strike Rate"
+FROM deliveries
+LEFT JOIN matches
+ON deliveries.match_id = matches.id
+WHERE matches.season = 2017
+GROUP BY batsman
+ORDER BY "Strike Rate";
